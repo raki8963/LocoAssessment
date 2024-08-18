@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.transaction.Transactional;
 import org.example.entity.Transaction;
 import org.example.repository.TransactionRepository;
 import org.json.JSONObject;
@@ -15,14 +16,15 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Transactional
     public Transaction saveTransaction(Transaction transaction){
-        if(transaction.getParent_id()!=null){
-            Transaction check = transactionRepository.findById(transaction.getParent_id()).orElse(null);
-            if(check==null){
-                transaction.setParent_id(null);
-            }
+        transaction.setTotal_sum(transaction.getAmount());
+        if(transaction.getId() == transaction.getParent_id()){
+            transaction.setParent_id(null);
         }
-        return transactionRepository.save(transaction);
+        Transaction savedtransaction = transactionRepository.save(transaction);
+        updateParentTransactions(savedtransaction,savedtransaction.getAmount());
+        return savedtransaction;
     }
 
     public Transaction putTransaction(Long id,Double amount,String type,Long parent_id){
@@ -31,13 +33,6 @@ public class TransactionService {
         transaction.setId(id);
         transaction.setType(type);
         transaction.setAmount(amount);
-
-//        if(parent_id!=null){
-//            Transaction check = transactionRepository.findById(parent_id).orElse(null);
-//            if(check!=null){
-//                transaction.setParent_id(parent_id);
-//            }
-//        }
         transaction.setParent_id(parent_id);
         return transactionRepository.save(transaction);
     }
@@ -51,6 +46,8 @@ public class TransactionService {
         return transactionRepository.findByType(type);
     }
 
+    //Recursive Approach
+    //Every Time It traverse whole tree
     public JSONObject getSum(Long id){
 
         Double sum = getChildNodesSum(id,getTransaction(id).get().getAmount());
@@ -70,5 +67,27 @@ public class TransactionService {
         }
         return sum;
     }
+
+    //Directly Fetching Data From DB
+    //O(1)
+    public JSONObject getSumEfficientApproach(Long id){
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        Double total_sum = transaction.get().getTotal_sum();
+        JSONObject res = new JSONObject();
+        res.put("sum",total_sum);
+        return res;
+    }
+
+    @Transactional
+    private  void updateParentTransactions(Transaction transaction,Double amount){
+        Long parentId = transaction.getParent_id();
+        if(parentId!=null){
+            Optional<Transaction> parentNode = transactionRepository.findById(parentId);
+            transactionRepository.updateTransactionSum(parentNode.get().getId(),amount+ parentNode.get().getAmount());
+            updateParentTransactions(parentNode.orElse(null),amount);
+        }
+    }
+
+
 
 }

@@ -15,6 +15,8 @@ public class Transaction {
 
     private Long parent_id;
 
+    private Double total_sum;
+
 
 
     public Long getId() {
@@ -47,5 +49,13 @@ public class Transaction {
 
     public void setParent_id(Long parent_id) {
         this.parent_id = parent_id;
+    }
+
+    public Double getTotal_sum() {
+        return total_sum;
+    }
+
+    public void setTotal_sum(Double total_sum) {
+        this.total_sum = total_sum;
     }
 }
