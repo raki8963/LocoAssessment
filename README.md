@@ -50,7 +50,7 @@ This Spring Boot application provides RESTful APIs to manage transactions. It al
 - Handling Cyclic References: In the recursive approach, special care must be taken to detect and handle cycles in the transaction tree to prevent infinite loops and stack overflow errors.
 - Consistency: Ensure that the efficient approach maintains data consistency, especially during concurrent transactions or when updates are made to parent nodes.
 - Testing and Validation: Thorough testing is necessary for both approaches to validate correctness, performance, and to identify potential edge cases or bottlenecks.
-- If we consider a cycle is possible , then we can maintain a sepaarte columns where we store all its child nodes and perform calculations while creating and updating the db.
+- If we consider a cycle is possible , then we can maintain a separte columns where we store all its child nodes and perform calculations while creating and updating the db.
 - ## When cycles are possible, maintain a separate column for child nodes and precomputed aggregate sums to facilitate real-time updates and calculations, and implement cycle detection to manage potential infinite loops.
 ## Technologies Used
 
