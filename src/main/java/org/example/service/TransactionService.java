@@ -23,7 +23,11 @@ public class TransactionService {
             transaction.setParent_id(null);
         }
         Transaction savedtransaction = transactionRepository.save(transaction);
-        updateParentTransactions(savedtransaction,savedtransaction.getAmount());
+        if(savedtransaction.getId()!= savedtransaction.getParent_id()){
+            updateParentTransactions(savedtransaction,savedtransaction.getAmount());
+        }else{
+            savedtransaction.setParent_id(null);
+        }
         return savedtransaction;
     }
 
