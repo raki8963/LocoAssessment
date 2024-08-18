@@ -32,12 +32,21 @@ public class TransactionService {
     }
 
     public Transaction putTransaction(Long id,Double amount,String type,Long parent_id){
+
         Transaction transaction = new Transaction();
         transaction.setId(id);
         transaction.setType(type);
         transaction.setAmount(amount);
         transaction.setParent_id(parent_id);
-        return transactionRepository.save(transaction);
+
+        Transaction prevData = transactionRepository.findById(id).get();
+        Double prevAmount = prevData.getAmount();
+
+        Double difference = amount - prevAmount;//Difference for prevValue and CurrentValue
+        Transaction saved =  transactionRepository.save(transaction);
+        updateParentTransactions(saved,difference);
+
+        return saved;
     }
 
     public Optional<Transaction> getTransaction(Long id){
