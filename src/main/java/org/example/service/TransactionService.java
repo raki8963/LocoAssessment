@@ -32,7 +32,6 @@ public class TransactionService {
     }
 
     public Transaction putTransaction(Long id,Double amount,String type,Long parent_id){
-
         Transaction transaction = new Transaction();
         transaction.setId(id);
         transaction.setType(type);

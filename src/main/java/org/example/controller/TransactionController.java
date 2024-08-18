@@ -49,7 +49,8 @@ public class TransactionController {
 
     @GetMapping("/transaction/sum/{id}")
     public ResponseEntity<JsonNode> getSum(@PathVariable Long id) throws JsonProcessingException {
-        JSONObject res = service.getSum(id);
+        //JSONObject res = service.getSum(id);
+        JSONObject res = service.getSumEfficientApproach(id);
         return new ResponseEntity<>(new ObjectMapper().readTree(res.toString()),HttpStatus.OK);
     }
 
